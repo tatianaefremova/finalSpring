@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Личный кабинет администратора</title>
+</head>
+<body>
+<h1 th:text="'Личный кабинет администратора ' + ${#authentication.principal.getPerson().getLogin()}"></h1>
+<form method="post" action="/logout">
+  <button type="submit">Выйти из личного кабинета</button>
+  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+</form>
+<a href="admin/product/add">Добавить товар</a>
+<hr>
+<div th:each="product : ${products}">
+  <p th:text="'Наименование: ' + ${product.getTitle()}"></p>
+  <p th:text="'Описание: ' + ${product.getDescription()}"></p>
+  <p th:text="'Цена: ' + ${product.getPrice()}"></p>
+  <p th:text="'Cклад: ' + ${product.getWarehouse()}"></p>
+  <p th:text="'Продавец: ' + ${product.getSeller()}"></p>
+  <p th:text="'Категория: ' + ${product.getCategory().getName()}"></p>
+  <a th:href="@{/admin/product/edit/{id}(id=${product.getId()})}">Редактирование товара</a>
+  <a th:href="@{/admin/product/delete/{id}(id=${product.getId()})}">Удаление товара</a>
+  <hr>
+</div>
+
+<table>
+  <caption>Список заказов</caption>
+  <thead>
+  <tr>
+    <th>Номер заказа</th>
+    <th>Дата</th>
+    <th>Описание</th>
+    <th>Цена</th>
+    <th>Статус</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <td colspan="6">
+      <form th:method="GET" th:action="@{/admin/order/search}">
+        <div>
+          <label for="search">Введите последние четыре символа номера заказа</label>
+          <input type="text" id="search" name="search" maxlength="4" th:value="*{value_search}">
+          <input type="submit" value="Найти">
+        </div>
+      </form>
+    </td>
+  </tr>
+  </tfoot>
+  <tbody>
+  <tr th:each="order : ${orders}">
+    <td th:text="${order.getNumber()}"></td>
+    <td th:text="${order.getDateTime()}"></td>
+    <td th:text="${order.getProduct().getTitle()}"></td>
+    <td th:text="${order.getPrice()}"></td>
+    <td th:text="${order.getStatus()}"></td>
+    <td><a th:href="@{/admin/order/edit/{number}(number=${order.getNumber()})}">Редактировать</a></td>
+  </tr>
+  </tbody>
+</table>
+
+
+<table>
+  <caption>Список пользователей</caption>
+  <thead>
+  <tr>
+    <th>Логин</th>
+    <th>Роль</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tfoot>
+  <tr>
+    <td colspan="3">
+    </td>
+  </tr>
+  </tfoot>
+  <tbody>
+  <tr th:each="person : ${persons}">
+    <td th:text="${person.getLogin()}"></td>
+    <td th:text="${person.getRole()}"></td>
+    <td><a th:href="@{/admin/user/edit/{id}(id=${person.getId()})}">Редактировать</a></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
